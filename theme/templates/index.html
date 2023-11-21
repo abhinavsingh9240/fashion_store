@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+    <script>
+        window.addEventListener("scroll", function () {
+    const header = document.getElementById("navbar");
+
+    if (window.scrollY > 20) {
+
+      header.classList.add("bg-black");
+
+
+    } else {
+
+      header.classList.remove("bg-black");
+
+    }
+  });
+    </script>
+    <section>
+{#            <div class="h-screen w-screen bg-black">#}
+{#                som#}
+{#            </div>#}
+        <video muted="" autoplay="" playsinline="" loop="" class="w-screen h-screen object-cover -z-10">
+            src="/media/cc0-videos/flower.mp4"
+            <source src="{% static 'images/hero.mov' %}"
+                    type="video/mp4"/>
+        </video>
+
+    </section>
+
+    <section class="text-gray-600 body-font bg-cover" >
+        <div class="container px-5 py-10 mx-auto">
+            <div class='text-3xl font-bold text-primary text-center uppercase m-8 '>
+                Check Out Categories
+            </div>
+            <div class="flex flex-wrap m-4">
+
+                {% for category  in categories %}
+                    <div class="lg:w-1/4 w-1/2 p-4 ">
+
+                        <a href="{% url 'list' %}?category={{ category.id }}" class="p-2 rounded-box hover:scale-110 transition-transform duration-300 hover:-translate-y-2 flex flex-col" href="#">
+                            <div class="h-40 md:h-80 rounded overflow-hidden">
+                                <img alt="ecommerce" class="object-cover object-center w-full h-full"
+                                     src="{{ category.thumbnail.url }}">
+                            </div>
+                            <div class="mt-4">
+                                <h2 class="text-gray-900 title-font text-2xl font-semibold">{{ category.name }}</h2>
+
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+    </section>
+    <section class="bg-base-200 pb-8">
+        <div class="container flex flex-wrap px-5 py-10 mx-auto">
+            <div class="w-full md:w-1/2 ">
+                <div class='text-3xl font-bold text-primary uppercase mx-4 my-8'>
+                    Check By Size
+                </div>
+                <div class="flex  flex-wrap m-4">
+                    {% for size in sizes %}
+                    	<a href="{% url 'list' %}?size={{ size.name }}" class="btn btn-outline btn-lg border-2 font-bold m-2">
+                        {{ size.name }}
+                    </a>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 ">
+                <div class='text-3xl font-bold text-primary uppercase mx-4 my-8'>
+                    Check By Section
+                </div>
+                <div class="flex flex-wrap m-4">
+                    {% for section in sections %}
+                    	<a href="{% url 'list' %}?section={{ section.name }}" class="btn btn-outline btn-lg border-2 font-bold m-2">
+                        {{ section.name }}
+                    </a>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock %}

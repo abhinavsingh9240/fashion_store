@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}
+    Settings
+{% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex flex-col min-h-screen w-screen justify-start place-items-center">
+        <div class="container mx-6">
+            <h1 class="text-3xl font-bold my-6 mx-2">Settings</h1>
+            <div class="rounded-box bg-base-200 m-2 p-6 flex place-items-center ">
+                <div class="flex flex-col px-4 ">
+                    <h1 class="font-semibold text-xl">{{ user.first_name }} {{ user.last_name }}</h1>
+                    <div class="text-sm mt-1"> Joined at {{ user.date_joined|date:'d N Y g:i A  ' }} </div>
+                </div>
+                <div class="flex flex-wrap justify-around grow px-6 text-opacity-40 text-sm ">
+                    <div class="flex flex-col">
+                        <div class="font-semibold">
+                            Email
+                        </div>
+                        <div>
+                            {{ user.email }}
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="font-semibold">
+                            Last Login
+                        </div>
+                        <div>
+                            {{ user.last_login|date:'d N Y g:i A ' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex">
+                <div class="p-2 w-1/4">
+                    <a href="{% url 'change_name' %}" class="btn btn-outline normal-case flex justify-between ">
+                        <p>Change Name</p>
+                        <span>></span>
+                    </a>
+                </div>
+                <div class="p-2 w-1/4">
+                    <a href="{% url 'change_email' %}" class="btn btn-outline normal-case flex justify-between ">
+                        <p>Change Email</p>
+                        <span>></span>
+                    </a>
+                </div>
+                <div class="p-2 w-1/4">
+                    <a href="{% url 'change_password' %}" class="btn btn-outline normal-case flex justify-between ">
+                        <p>Change Password</p>
+                        <span>></span>
+                    </a>
+                </div>
+                <div class="p-2 w-1/4">
+                    <a href="{% url 'delete_account' %}" class="btn btn-outline btn-error normal-case flex justify-between ">
+                        <p>Delete Account</p>
+                        <span>></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="container flex flex-col  py-2 ">
+            <h1 class="text-2xl font-semibold py-6 p-2">Have A Problem ?</h1>
+            <div class="flex w-full ">
+                <div class="p-2 w-1/4">
+                    <a href="#" class="btn btn-outline normal-case flex justify-between ">
+                        <p>Help and Support</p>
+                        <span>></span>
+                    </a>
+                </div>
+                <div class="p-2 w-1/4">
+                    <a href="#" class="btn btn-outline normal-case flex justify-between ">
+                        <p>Report a Bug</p>
+                        <span>></span>
+                    </a>
+                </div>
+                <div class="p-2 w-1/4">
+                    <a href="#" class="btn btn-outline normal-case flex justify-between ">
+                        <p>Report an Issue</p>
+                        <span>></span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

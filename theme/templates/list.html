@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %} Products {% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+
+
+    <div class="p-10"></div>
+    <div class="flex min-h-screen">
+{#        <form method="get" action="" class="fixed left-0 bg-white  w-72" id="filter-panel">#}
+{#            <h2 class="p-6 text-3xl font-bold">Filters</h2>#}
+{#            <div>#}
+{#                <div#}
+{#                        class="px-9 text-xl font-semibold py-2 hover:bg-base-200"#}
+{#                        onclick="toggle_by_id('section-menu')"#}
+{#                >#}
+{#                    <div class="flex justify-between place-items-center">#}
+{#                        <span>Section</span>#}
+{##}
+{#                        <svg#}
+{#                                xmlns="http://www.w3.org/2000/svg"#}
+{#                                height="24"#}
+{#                                viewBox="0 -960 960 960"#}
+{#                                width="24"#}
+{#                        >#}
+{#                            <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>#}
+{#                        </svg>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div id="section-menu" class="hidden">#}
+{#                    <div class="bg-base-200 shadow-inner flex flex-col py-2">#}
+{##}
+{#                        {% for section  in sections %}#}
+{#                            <label for="section_{{ section.name }}" class="flex place-items-center space-x-2 px-10"#}
+{#                            ><input#}
+{#                                    type="checkbox"#}
+{#                                    id="section_{{ section.name }}"#}
+{#                                    value="{{ section.id }}"#}
+{#                                    name="section"#}
+{#                                    class="checkbox checkbox-primary checkbox-xs"#}
+{#                            /><span class="text-lg">{{ section.name }}</span></label#}
+{#                            >#}
+{#                        {% endfor %}#}
+{##}
+{##}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div>#}
+{#                <div#}
+{#                        class="px-9 text-xl font-semibold py-2 hover:bg-base-200"#}
+{#                        onclick="toggle_by_id('category-menu')"#}
+{#                >#}
+{#                    <div class="flex justify-between place-items-center">#}
+{#                        <span>Category</span>#}
+{##}
+{#                        <svg#}
+{#                                xmlns="http://www.w3.org/2000/svg"#}
+{#                                height="24"#}
+{#                                viewBox="0 -960 960 960"#}
+{#                                width="24"#}
+{#                        >#}
+{#                            <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>#}
+{#                        </svg>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div id="category-menu" class="hidden">#}
+{#                    <div class="bg-base-200 shadow-inner flex flex-col py-2">#}
+{##}
+{#                        {% for section  in sections %}#}
+{#                            <label for="section_{{ section.name }}" class="flex place-items-center space-x-2 px-10"#}
+{#                            ><input#}
+{#                                    type="checkbox"#}
+{#                                    id="section_{{ section.name }}"#}
+{#                                    class="checkbox checkbox-primary checkbox-xs"#}
+{#                            /><span class="text-lg">{{ section.name }}</span></label#}
+{#                            >#}
+{#                        {% endfor %}#}
+{##}
+{##}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div>#}
+{#                <div#}
+{#                        class="px-9 text-xl font-semibold py-2 hover:bg-base-200"#}
+{#                        onclick="toggle_by_id('size-menu')"#}
+{#                >#}
+{#                    <div class="flex justify-between place-items-center">#}
+{#                        <span>Size</span>#}
+{##}
+{#                        <svg#}
+{#                                xmlns="http://www.w3.org/2000/svg"#}
+{#                                height="24"#}
+{#                                viewBox="0 -960 960 960"#}
+{#                                width="24"#}
+{#                        >#}
+{#                            <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>#}
+{#                        </svg>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div id="size-menu" class="hidden">#}
+{#                    <div class="bg-base-200 shadow-inner flex flex-col py-2">#}
+{##}
+{#                        {% for size  in sizes %}#}
+{#                            <label for="section_{{ size.name }}" class="flex place-items-center space-x-2 px-10"#}
+{#                            ><input#}
+{#                                    type="checkbox"#}
+{#                                    id="section_{{ size.name }}"#}
+{#                                    class="checkbox checkbox-primary checkbox-xs"#}
+{#                            /><span class="text-lg">{{ size.name }}</span></label#}
+{#                            >#}
+{#                        {% endfor %}#}
+{##}
+{##}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="flex justify-center py-2">#}
+{#            <button class="btn btn-primary" type="submit">Apply Filters</button>#}
+{#            </div>#}
+{#        </form>#}
+        <div class="flex justify-center px-6   w-full">
+            <div class="container grid grid-cols-4 gap-2">
+
+                {% for product  in products %}
+                    <div class="w-full  p-3 h-[540px]">
+                        <a href="{% url 'product' product.id %}" class="p-2 rounded-box hover:scale-105 transition-transform duration-300 hover:-translate-y-2 flex flex-col justify-between h-full"
+                           href="#">
+                            <div>
+                                <div class="h-40 md:h-[22rem] rounded overflow-hidden w-full bg-cover "
+                                     style='background-image: url("{{ product.get_dp_url }}")'>
+                                    {#                                    <img alt="ecommerce" class="object-cover object-center w-full h-full"#}
+                                    {#                                         src="{{ product.get_dp_url }}">#}
+
+                                </div>
+                                <h2 class="mt-4 px-2  title-font font-semibold">{{ product.name }}</h2>
+                            </div>
+                            <div class="px-2">
+                                <div class="flex justify-between place-items-center  ">
+                                    <p class="text-lg">₹{{ product.price }}</p>
+                                    {#                                    <button class="btn btn-primary">Buy Now</button>#}
+                                </div>
+                                <div class="flex space-x-2 mt-2">
+                                    {% for size in product.size.all %}
+                                        <div class="border border-primary px-2 py-0.5">
+                                            {{ size.name }}
+
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+
+
+                        </a>
+
+                    </div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggle_by_id(id) {
+            const cart = document.getElementById(id);
+            if (cart.style.display === "none") {
+                cart.style.display = "block";
+            } else {
+                cart.style.display = "none";
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}
+    Change Email
+{% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex flex-col min-h-screen w-screen justify-start place-items-center">
+        <form method="POST" action="" class="container px-6">
+            {% csrf_token %}
+
+            <h1 class="text-3xl font-bold my-4 mx-2">Change Email</h1>
+            <div class="text-sm breadcrumbs my-2 mx-2">
+                <ul>
+                    <li><a href="{% url 'settings' %}">Settings</a></li>
+                    <li>Change Email</li>
+                </ul>
+            </div>
+            {% if success %}
+                <div class="alert alert-success mb-4 px-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Updated Successfully</span>
+                </div>
+            {% endif %}
+            <div class="grid grid-cols-2 gap-4">
+                <div class="rounded-box border-base-300 border-2 p-6">
+                    <h2 class="text-lg font-semibold p-1">Email</h2>
+                    <div class="flex space-x-2 ">
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">Current Email</span>
+                            </label>
+                            <input type="text" placeholder="Not Available" class="input input-bordered w-full max-w-xs"
+                                   disabled value="{{ user.email }}"/>
+                        </div>
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">New Email</span>
+                            </label>
+                            <input type="text" placeholder="Not Available" name="email" class="input input-bordered w-full max-w-xs" {% if form.first_name.value %}
+                                   value="{{ form.first_name.value }}"
+                            {% endif %} />
+                            <label class="label">
+                            <span class="label-text text-error">
+                                {% for error in form.first_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-box border-base-300 border-2 p-6">
+                    <h2 class="text-lg font-semibold p-1">User Confirmation</h2>
+                    <div class="form-control w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text">Confirm Your Password</span>
+                        </label>
+                        <input type="password" placeholder="Enter Password Here" name="password"
+                               class="input input-bordered w-full max-w-xs"/>
+                        {% if message %}
+                            <label class="label">
+                            <span class="label-text text-error">
+                                     {{ message }}
+                            </span>
+                            </label>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center p-6">
+                <button type="submit" class="btn btn-primary btn-wide">Change Email</button>
+
+            </div>
+        </form>
+
+    </div>
+
+    </div>
+{% endblock %}

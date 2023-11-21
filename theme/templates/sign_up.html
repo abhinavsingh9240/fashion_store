@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Products {% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex min-h-screen w-screen justify-center place-items-center">
+{#        <div class="self-stretch grow  overflow-hidden bg-contain bg-no-repeat" style='background-image: url("{% static '/images/shlok.jpg' %}")'>#}
+{##}
+{#        </div>#}
+        <div class="p-6 bg-base-200 rounded-box">
+            <h2 class="text-center font-semibold text-2xl py-4">
+                Create Account
+            </h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="flex space-x-2">
+                    <div class="form-control w-full max-w-xs">
+                        <label class="label" for="first_name">
+                            <span class="label-text">First Name</span>
+                        </label>
+                        <input type="text" placeholder="John" class="input input-bordered w-full max-w-xs" id="first_name" name="first_name" {% if form.first_name.value %} value="{{ form.first_name.value }}"{% endif %} >
+                        <label class="label" for="first_name">
+                            <span class="label-text-alt">
+                                {% for error in form.first_name.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                                
+                            </span>
+                        </label>
+                    </div>
+                    <div class="form-control w-full max-w-xs">
+                        <label class="label" for="last_name">
+                            <span class="label-text">Last Name</span>
+                        </label>
+                        <input type="text" placeholder="Doe" class="input input-bordered w-full max-w-xs" id="last_name" name="last_name" {% if form.last_name.value %} value="{{ form.last_name.value }}"{% endif %}>
+                        <label class="label" for="last_name">
+                            <span class="label-text-alt">
+                                {% for error in form.last_name.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                            </span>
+                        </label>
+                    </div>
+
+                </div>
+                <div class="form-control w-full ">
+                    <label class="label" for="email">
+                        <span class="label-text">Email</span>
+                    </label>
+                    <input type="email" placeholder="john@example.com" class="input input-bordered w-full " id="email" name="email" {% if form.email.value %} value="{{ form.email.value }}"{% endif %}>
+                    <label class="label" for="email">
+                        <span class="label-text-alt">
+                            {% for error in form.email.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form-control w-full ">
+                    <label class="label" for="password1">
+                        <span class="label-text">Password</span>
+                    </label>
+                    <input type="password" placeholder="Your Secret Key" class="input input-bordered w-full " id="password1" name="password1" {% if form.password1.value %} value="{{ form.password1.value }}"{% endif %}>
+                    <label class="label" for="password1">
+                        <span class="label-text-alt">
+                            {% for error in form.password1.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                        </span>
+                    </label>
+                </div>
+                <div class="form-control w-full ">
+                    <label class="label" for="password2">
+                        <span class="label-text">Retype Password</span>
+                    </label>
+                    <input type="password" placeholder="Again Secret Key" class="input input-bordered w-full " id="password2" name="password2" {% if form.password2.value %} value="{{ form.password2.value }}"{% endif %}>
+                    <label class="label" for="password2">
+                        <span class="label-text-alt">
+                            {% for error in form.password2.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                        </span>
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start" for="check">
+                        <input type="checkbox" checked="checked" class="checkbox checkbox-sm" id="check"/>
+                        <span class="label-text ml-4">I Accept <a href="#"
+                                                                  class="underline">Terms and Conditions</a></span>
+                    </label>
+                </div>
+                <div class="flex justify-center m-2">
+
+                    <button type="submit" class="btn btn-primary btn-wide">Register Account</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

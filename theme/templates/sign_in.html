@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Products {% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex min-h-screen w-screen justify-center place-items-center">
+        <div class="p-6 bg-base-200 rounded-box">
+            <h2 class="text-center font-semibold text-2xl py-4">
+                Sign In to Your Account
+            </h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+
+                <div class="form-control w-full ">
+                    <label class="label" for="email_phone">
+                        <span class="label-text">Email</span>
+                    </label>
+                    <input type="email" placeholder="john@example.com" class="input input-bordered w-full " id="email_phone" name="email_phone" {% if form.email_phone.value %} value="{{ form.email_phone.value }}"{% endif %}>
+                    <label class="label" for="email_phone">
+                        <span class="label-text-alt">
+                            {% for error in form.email_phone.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                        </span>
+                    </label>
+                </div>
+
+
+                <div class="form-control w-full ">
+                    <label class="label" for="password">
+                        <span class="label-text">Password</span>
+                    </label>
+                    <input type="password" placeholder="Enter Password" class="input input-bordered w-full " id="password" name="password" {% if form.password.value %} value="{{ form.password.value }}"{% endif %}>
+                    <label class="label" for="password">
+                        <span class="label-text-alt">
+                            {% for error in form.password.errors %}
+                                	{{ error }}
+                                {% endfor %}
+                        </span>
+                    </label>
+                </div>
+                <div class="text-red-500 text-sm">
+                    {{ message }}
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start" for="check">
+                        <input type="checkbox" checked="checked" class="checkbox checkbox-sm" id="check"/>
+                        <span class="label-text ml-4">Remember Me</span>
+                    </label>
+                </div>
+                <div class="flex justify-center m-2">
+
+                    <button type="submit" class="btn btn-primary btn-wide">Sign In</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}
