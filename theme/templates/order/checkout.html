@@ -19,24 +19,28 @@
                         <th>Unit Price(₹)</th>
                         <th>Quantity</th>
                         <th>Total Price(₹)</th>
-                        <th>Action</th>
+{#                        <th>Action</th>#}
                     </tr>
                     </thead>
                     <tbody>
                     {% for item in items %}
                         <tr>
-                            <td class="flex place-items-center space-x-4">
+                            <td>
+                                <a href="{% url 'product' item.product.id %}" target="_blank" class="flex place-items-center space-x-4 ">
                                 <img src="{{ item.product.get_dp_url }}" alt="product-image"
                                      class="mask mask-square w-16 h-16">
-                                <span class="text-lg font-semibold">{{ item.product.name }}</span>
+                                <span class="text-lg font-semibold ">{{ item.product.name }}</span>
+                                    </a>
                             </td>
                             <td>{{ item.size }}</td>
                             <td>₹{{ item.product.price }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td class="font-semibold">₹{% widthratio item.product.price 1 item.quantity %}</td>
                             <td>
-                                <button class="btn btn-primary btn-sm">Remove</button>
+                                {{ item.quantity }}
                             </td>
+                            <td class="font-semibold">₹{% widthratio item.product.price 1 item.quantity %}</td>
+{#                            <td>#}
+{#                                <button class="btn btn-primary btn-sm">Remove</button>#}
+{#                            </td>#}
                         </tr>
                     {% endfor %}
                     <tr>

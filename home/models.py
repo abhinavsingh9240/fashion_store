@@ -74,7 +74,7 @@ order_status = (
 
 class Order(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    status = models.IntegerField(choices=order_status,default=0)
+    status = models.IntegerField(choices=order_status, default=0)
 
     ordered = models.BooleanField(default=False)
 
@@ -86,7 +86,15 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     quantity = models.IntegerField()
-    size = models.ForeignKey(Size,on_delete=models.RESTRICT)
+    size = models.ForeignKey(Size, on_delete=models.RESTRICT)
     price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class OrderPayment(models.Model):
+    razorpay_payment_id = models.CharField(max_length=255, blank=True)
+    razorpay_order_id = models.CharField(max_length=255,)
+    razorpay_signature = models.TextField(blank=True)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    amount = models.IntegerField()

@@ -7,10 +7,9 @@ from home.models import Cart
 
 
 class RegistrationForm(UserCreationForm):
-
     class Meta:
         model = User
-        fields = ['email', 'password1', 'password2', 'first_name', 'last_name' ]
+        fields = ['email', 'password1', 'password2', 'first_name', 'last_name']
 
 
 class LoginForm(forms.Form):
@@ -25,14 +24,18 @@ class NameChangeForm(forms.ModelForm):
 
 
 class EmailChangeForm(forms.ModelForm):
-
     class Meta:
         model = User
         fields = ('email',)
 
 
 class CartForm(forms.ModelForm):
-
     class Meta:
         model = Cart
         fields = ('quantity', 'size')
+
+
+class ProductOrder(forms.Form):
+    product_id = forms.IntegerField()
+    quantity = forms.IntegerField()
+    size_id = forms.IntegerField()

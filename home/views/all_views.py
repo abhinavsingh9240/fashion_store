@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from fashion_store import settings
-from home.forms import RegistrationForm, LoginForm, CartForm
-from home.models import Category, Product, Section, Size, Cart, Order
+from home.forms import RegistrationForm, LoginForm, CartForm, ProductOrder
+from home.models import Category, Product, Section, Size, Cart, Order, OrderItem, OrderPayment
 
 
 # Create your views here.
@@ -164,61 +164,54 @@ def checkout_view(request):
     return render(request, template_name='order/checkout.html', context=context)
 
 
-def order_view(request):
-
-    if request.method == 'POST' :
-
-        if 'cart-order' in request.POST:
-
-            order = Order.objects.create(user= request.user)
-
-
-    context = {
-
-    }
-    return render(request, template_name='order/order.html', context=context)
-
-
 razorpay_client = razorpay.Client(
     auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
 
 def payment_view(request):
-
-    if request.method == "POST":
-
+    if request.method == 'POST':
+        total_amount = 0
+        order = None
         if 'cart-order' in request.POST:
-            items = Cart.objects.filter(user=request.user)
-            total_amount = 0
-            for item in items:
-                total_amount += item.product.price * item.quantity
+            # if order is from cart
+            order = Order.objects.create(user=request.user)
+            for cart_item in Cart.objects.filter(user=request.user):
+                item_price = cart_item.quantity * cart_item.product.price
+                OrderItem.objects.create(order=order, product=cart_item.product, quantity=cart_item.quantity,
+                                         size=cart_item.size, price=item_price)
+                total_amount += item_price
+        elif 'product-order' in request.POST:
+            # if ordering product directly
+            form = ProductOrder(request.POST)
+            quantity = form.cleaned_data['quantity']
+            product_id = form.cleaned_data['product_id']
+            size_id = form.cleaned_data['size_id']
 
-            currency = 'INR'
-            razorpay_amount = total_amount*100
-            # Create a Razorpay Order
-            razorpay_order = razorpay_client.order.create(dict(amount=razorpay_amount,
-                                                               currency=currency,
-                                                               payment_capture='0'))
-            context = {
-                'items': items,
-                'total_amount': total_amount,
-            }
-            # order id of newly created order.
-            razorpay_order_id = razorpay_order['id']
-            callback_url = 'paymenthandler/'
+            product = Product.objects.get(id=product_id)
+            total_amount = product.price * quantity
 
-            # we need to pass these details to frontend.
-            context = {'razorpay_order_id': razorpay_order_id, 'razorpay_merchant_key': settings.RAZOR_KEY_ID,
-                       'razorpay_amount': razorpay_amount, 'currency': currency, 'callback_url': callback_url}
+            order = Order.objects.create(user=request.user)
+            OrderItem.objects.create(order=order, product=product, quantity=quantity,
+                                     size_id=size_id, price=total_amount)
 
-            return render(request, 'order/payment.html', context=context)
+        currency = 'INR'
+        razorpay_amount = total_amount * 100
+        # Create a Razorpay Order
+        razorpay_order = razorpay_client.order.create(dict(amount=razorpay_amount,
+                                                           currency=currency,
+                                                           payment_capture='0'))
+
+        # order id of newly created order.
+        razorpay_order_id = razorpay_order['id']
+        callback_url = 'paymenthandler/'
+
+        OrderPayment.objects.create(razorpay_order_id=razorpay_order_id, order=order,amount=total_amount)
+
+        context = {'razorpay_order_id': razorpay_order_id, 'razorpay_merchant_key': settings.RAZOR_KEY_ID,
+                   'razorpay_amount': razorpay_amount, 'currency': currency, 'callback_url': callback_url,'order' :order}
+        return render(request, 'order/payment.html', context=context)
 
     return redirect('index')
-
-
-
-
-
 
 
 @csrf_exempt
@@ -241,11 +234,12 @@ def paymenthandler(request):
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
             if result is not None:
-                amount = 20000  # Rs. 200
+                payment_instance = OrderPayment.objects.get(razorpay_order_id = razorpay_order_id)
+                razorpay_amount = payment_instance.amount * 100
                 try:
 
                     # capture the payemt
-                    razorpay_client.payment.capture(payment_id, amount)
+                    razorpay_client.payment.capture(payment_id, razorpay_amount)
 
                     # render success page on successful caputre of payment
                     return render(request, 'paymentsuccess.html')
