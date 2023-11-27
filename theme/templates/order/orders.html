@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}
+    Orders
+{% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex flex-col min-h-screen w-screen justify-start place-items-center">
+        <div class="container px-6">
+            <h1 class="text-3xl font-bold my-4 mx-2">Orders</h1>
+            <div class="flex flex-col">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total Amount(₹)</th>
+                        {#                        <th>Action</th>#}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for order in orders %}
+
+
+                        <tr class="clickable-row cursor-pointer hover:bg-base-200"
+                            data-href="{% url 'order_page' order.id %}">
+
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.created_at|date:'d N Y g:i A ' }}</td>
+                            <td>
+                                {% if order.ordered %}
+                                    {% if order.status == 0 %}
+                                        <span class=" badge badge-info py-2">Processing</span>
+
+                                    {% elif order.status == 1 %}
+                                        <span class=" badge badge-info py-2">Shipped</span>
+                                    {% else %}
+                                        <span class=" badge badge-success py-2">Delivered</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge badge-warning py-2">Uncompleted</span>
+                                {% endif %}
+                            </td>
+                            <td>₹ {{ order.amount }}</td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+    <script>
+        jQuery(document).ready(function ($) {
+            $(".clickable-row").click(function () {
+                window.location = $(this).data("href");
+            });
+        });
+    </script>
+{% endblock %}

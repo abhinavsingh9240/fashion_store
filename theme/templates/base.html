@@ -88,7 +88,7 @@
                     {% if user.is_authenticated %}
                         <li class="menu-title ">Hi, {{ user.first_name }} {{ user.last_name }}</li>
                         <li><a href="{% url 'settings' %}">Settings</a></li>
-                        <li><a>Orders</a></li>
+                        <li><a href="{% url 'orders_page' %}">Orders</a></li>
                         <li>
                             <form action="{% url 'sign_out' %}" method="POST">{% csrf_token %} <button type="submit">Logout</button></form></li>
                     {% else %}
@@ -118,15 +118,16 @@
         <div id="cart-container" class="flex flex-col grow overflow-y-auto">
 
         </div>
-        <div class="flex place-items-center justify-between pt-6 px-4">
+        <form action="{% url 'checkout' %}" method="POST" class="flex place-items-center justify-between pt-6 px-4">
+            {% csrf_token %}
             <p id="total-cart-price" class="font-semibold text-xl"></p>
-            <a href="{% url 'checkout' %}" class="btn btn-primary ">Checkout
+            <button type="submit" class="btn btn-primary " name="cart-order">Checkout
                 <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
                      class="fill-white">
                     <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
                 </svg>
-            </a>
-        </div>
+            </button>
+        </form>
     </div>
     <div class="hidden">
         <button class="btn-xs hover:underline"></button>

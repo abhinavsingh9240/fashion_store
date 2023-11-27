@@ -12,8 +12,10 @@ urlpatterns = [
     path('cart_panel/',all_views.cart_panel,name='cart_panel'),
     path('search/',all_views.search_view,name='search'),
     path('checkout/',all_views.checkout_view,name='checkout'),
-    path('payment/',all_views.payment_view,name="payment"),
+    path('payment/<int:order_id>',all_views.payment_view,name="payment"),
     path('paymenthandler/', all_views.paymenthandler, name='paymenthandler'),
+    path('orders/',all_views.orders_view,name='orders_page'),
+    path('order/<int:order_id>',all_views.order_view,name='order_page'),
     # settings
     path('settings', settings_views.settings_view, name="settings"),
     path('settings/change_name', settings_views.change_name, name="change_name"),

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}
+    Orders
+{% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex flex-col min-h-screen w-screen justify-start place-items-center">
+        <div class="container px-6">
+            <h1 class="text-3xl font-bold my-4 mx-2">Order </h1>
+            <div class="text-sm breadcrumbs mx-2 mb-4">
+                <ul>
+                    <li><a href="{% url 'orders_page' %}">Orders</a></li>
+                    <li>UID:{{ order.id }}</li>
+                </ul>
+            </div>
+            <div class="flex flex-col">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Quantity</th>
+                        <th>Total Price(₹)</th>
+                        {#                        <th>Action</th>#}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in order.orderitem_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'product' item.product.id %}" target="_blank"
+                                   class="flex place-items-center space-x-4 ">
+                                    <img src="{{ item.product.get_dp_url }}" alt="product-image"
+                                         class="mask mask-square w-16 h-16">
+                                    <span class="text-lg font-semibold ">{{ item.product.name }}</span>
+                                </a>
+                            </td>
+                            <td>{{ item.size }}</td>
+                            <td>
+                                {{ item.quantity }}
+                            </td>
+                            <td class="font-semibold">₹{% widthratio item.product.price 1 item.quantity %}</td>
+                            {#                            <td>#}
+                            {#                                <button class="btn btn-primary btn-sm">Remove</button>#}
+                            {#                            </td>#}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <th></th>
+                        <th></th>
+
+                        <th class="font-bold text-lg">Total</th>
+                        <th class="font-bold text-lg">₹{{ order.amount }}</th>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="flex justify-end">
+
+                    {% if order.ordered == False %}
+                        <form method="post" action="{% url 'payment' order.id %}" class="m-6 ">
+                            {% csrf_token %}
+                            <button type="submit" name="cart-order" class="btn btn-primary btn-wide">Make Payment
+                            </button>
+                        </form>
+                    {% endif %}
+                    {% if order.status < 2 %}
+                        <button type="submit" name="cart-order" class="btn btn-error btn-outline btn-wide m-6"
+                                onclick="toggleCancelOrderModal()">Cancel Order
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="cancel-order-overlay" class=" hidden z-40 fixed top-0 left-0 right-0 bottom-0 bg-neutral-900 opacity-50">
+
+    </div>
+    <dialog id="cancel-order-modal" class="hidden fixed inset-1/2 -translate-x-1/2 -translate-y-1/2 w-96  bg-base-100 shadow-xl card z-40 p-6 ">
+        <h3 class="text-lg font-semibold">Confirm Order Deletion</h3>
+        <p class="mt-2 mb-4">Are you sure that you want to delete the order?</p>
+        <div class="flex justify-end space-x-4 ">
+            <form action="" method="post">
+                {% csrf_token %}
+            <button class="btn btn-primary " type="submit" name="cancel-order">Confirm</button>
+            </form>
+                <button class="btn btn-outline " onclick="toggleCancelOrderModal()">Cancel</button>
+        </div>
+    </dialog>
+    <script>
+        const cancelOrderModal = document.getElementById('cancel-order-modal');
+        const cancelOrderOverlay = document.getElementById('cancel-order-overlay');
+
+        function toggleCancelOrderModal() {
+
+            if(cancelOrderModal.classList.contains("hidden")){
+                cancelOrderModal.classList.remove("hidden");
+                cancelOrderOverlay.classList.remove("hidden");
+            }else{
+                cancelOrderOverlay.classList.add("hidden");
+                cancelOrderModal.classList.add('hidden');
+            }
+        }
+
+
+        cancelOrderOverlay.addEventListener('click',function (event) {
+            toggleCancelOrderModal();
+        });
+    </script>
+{% endblock %}

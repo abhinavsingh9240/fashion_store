@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from fashion_store import settings
-from home.forms import RegistrationForm, LoginForm, CartForm, ProductOrder
+from home.forms import RegistrationForm, LoginForm, CartForm, OrderItemForm
 from home.models import Category, Product, Section, Size, Cart, Order, OrderItem, OrderPayment
 
 
@@ -40,16 +40,34 @@ def list_view(request):
 
 
 def product_view(request, product_id):
+    product = Product.objects.get(id=product_id)
     if request.method == "POST":
-        cart_form = CartForm(request.POST)
-        if cart_form.is_valid():
-            cart_instance = cart_form.save(commit=False)
-            cart_instance.user = request.user
-            cart_instance.product_id = product_id
-            cart_instance.save()
+        if not request.user.is_authenticated:
+            return redirect('sign_in')
+
+        if 'add-cart' in request.POST:
+            cart_form = CartForm(request.POST)
+            if cart_form.is_valid():
+                cart_instance = cart_form.save(commit=False)
+                cart_instance.user = request.user
+                cart_instance.product_id = product_id
+                cart_instance.save()
+
+        elif 'buy-now' in request.POST:
+            order_item_form = OrderItemForm(request.POST)
+            if order_item_form.is_valid():
+                order_item = order_item_form.save(commit=False)
+                order_item.product = product
+                order_item.price = product.price * order_item.quantity
+
+                order = Order.objects.create(user=request.user)
+                order_item.order = order
+                order_item.save()
+
+                return redirect('order_page', order_id=order.id)
 
     context = {
-        "product": Product.objects.get(id=product_id)
+        "product": product
     }
     return render(request, 'product_page.html', context=context)
 
@@ -152,63 +170,69 @@ def signout_view(request):
     return redirect("index")
 
 
+# TODO: Add loginrequired to the views that need it
+@login_required
 def checkout_view(request):
-    items = Cart.objects.filter(user=request.user)
-    total = 0
-    for item in items:
-        total += item.product.price * item.quantity
-    context = {
-        'items': items,
-        'total': total,
-    }
-    return render(request, template_name='order/checkout.html', context=context)
+    if request.method == "POST" and 'cart-order' in request.POST:
+
+        # if order is from cart
+        order = Order.objects.create(user=request.user)
+        for cart_item in Cart.objects.filter(user=request.user):
+            item_price = cart_item.quantity * cart_item.product.price
+            OrderItem.objects.create(order=order, product=cart_item.product, quantity=cart_item.quantity,
+                                     size=cart_item.size, price=item_price)
+            cart_item.delete()
+        # return render(request, template_name='order/checkout.html', context={"order": order})
+        return redirect('order_page', order_id=order.id)
+
+    return redirect('index')
+
+
+@login_required
+def order_view(request, order_id):
+    order = Order.objects.get(id=order_id)
+    if request.user == order.user:
+        if request.method == "POST" and "cancel-order" in request.POST:
+            Order.objects.get(id=order_id).delete()
+            return redirect("orders_page")
+        context = {
+            "order": order
+        }
+        return render(request, template_name='order/order.html', context=context)
+    else:
+        return redirect('index')
 
 
 razorpay_client = razorpay.Client(
     auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
 
-def payment_view(request):
-    if request.method == 'POST':
-        total_amount = 0
-        order = None
-        if 'cart-order' in request.POST:
-            # if order is from cart
-            order = Order.objects.create(user=request.user)
-            for cart_item in Cart.objects.filter(user=request.user):
-                item_price = cart_item.quantity * cart_item.product.price
-                OrderItem.objects.create(order=order, product=cart_item.product, quantity=cart_item.quantity,
-                                         size=cart_item.size, price=item_price)
-                total_amount += item_price
-        elif 'product-order' in request.POST:
-            # if ordering product directly
-            form = ProductOrder(request.POST)
-            quantity = form.cleaned_data['quantity']
-            product_id = form.cleaned_data['product_id']
-            size_id = form.cleaned_data['size_id']
-
-            product = Product.objects.get(id=product_id)
-            total_amount = product.price * quantity
-
-            order = Order.objects.create(user=request.user)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity,
-                                     size_id=size_id, price=total_amount)
+@login_required
+def payment_view(request, order_id):
+    order = Order.objects.get(id=order_id)
+    if request.method == 'POST' and request.user == order.user:
+        total_amount = order.amount
 
         currency = 'INR'
         razorpay_amount = total_amount * 100
-        # Create a Razorpay Order
-        razorpay_order = razorpay_client.order.create(dict(amount=razorpay_amount,
-                                                           currency=currency,
-                                                           payment_capture='0'))
 
-        # order id of newly created order.
-        razorpay_order_id = razorpay_order['id']
-        callback_url = 'paymenthandler/'
+        if hasattr(order, 'orderpayment'):
+            razorpay_order_id = order.orderpayment.razorpay_order_id
+        else:
+            # Create a Razorpay Order
+            razorpay_order = razorpay_client.order.create(dict(amount=razorpay_amount,
+                                                               currency=currency,
+                                                               payment_capture='0'))
 
-        OrderPayment.objects.create(razorpay_order_id=razorpay_order_id, order=order,amount=total_amount)
+            # order id of newly created order.
+            razorpay_order_id = razorpay_order['id']
 
+            OrderPayment.objects.create(razorpay_order_id=razorpay_order_id, order=order, amount=total_amount)
+
+        callback_url = '/paymenthandler/'
         context = {'razorpay_order_id': razorpay_order_id, 'razorpay_merchant_key': settings.RAZOR_KEY_ID,
-                   'razorpay_amount': razorpay_amount, 'currency': currency, 'callback_url': callback_url,'order' :order}
+                   'razorpay_amount': razorpay_amount, 'currency': currency, 'callback_url': callback_url,
+                   'order': order}
         return render(request, 'order/payment.html', context=context)
 
     return redirect('index')
@@ -234,13 +258,14 @@ def paymenthandler(request):
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
             if result is not None:
-                payment_instance = OrderPayment.objects.get(razorpay_order_id = razorpay_order_id)
+                payment_instance = OrderPayment.objects.get(razorpay_order_id=razorpay_order_id)
                 razorpay_amount = payment_instance.amount * 100
                 try:
 
                     # capture the payemt
                     razorpay_client.payment.capture(payment_id, razorpay_amount)
-
+                    payment_instance.order.ordered = True
+                    payment_instance.order.save()
                     # render success page on successful caputre of payment
                     return render(request, 'paymentsuccess.html')
                 except:
@@ -258,3 +283,11 @@ def paymenthandler(request):
     else:
         # if other than POST request is made.
         return HttpResponseBadRequest()
+
+
+@login_required
+def orders_view(request):
+    context = {
+        "orders": Order.objects.filter(user=request.user).order_by('-created_at'),
+    }
+    return render(request, template_name='order/orders.html', context=context)

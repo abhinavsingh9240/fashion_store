@@ -1,9 +1,22 @@
-{%  extends 'base.html' %}
+{% extends 'base.html' %}
 {% block title %}
-	Payment Failed
+    Payment Successful
 {% endblock %}
 {% block content %}
-	<div class=" flex justify-center place-items-center h-screen w-screen">
-        <span class="text-error">Payment Failed</span>
+    <div class=" flex flex-col justify-center place-items-center h-screen w-screen">
+        <span class="text-success">Payment Successful</span>
+        <span>  <p>You will be redirected in <time><strong id="seconds">3</strong> seconds</time>.</p></span>
     </div>
+    <script>
+        var el = document.getElementById('seconds'),
+            total = el.innerHTML,
+            timeinterval = setInterval(function () {
+                total = --total;
+                el.textContent = total;
+                if (total <= 0) {
+                    clearInterval(timeinterval);
+                    window.location = '{% url 'orders_page' %}';
+                }
+            }, 1000);
+    </script>
 {% endblock %}

@@ -10,7 +10,8 @@
                 <div class="w-1/2 flex  place-items-center m-2">
                     <div class="flex flex-col justify-center h-96 ">
                         {% for product_image in product.productimage_set.all %}
-                            <div class="w-20 h-20 overflow-hidden m-2 hover:scale-105  " onclick="changeMainImage('{{ product_image.image.url }}')">
+                            <div class="w-20 h-20 overflow-hidden m-2 hover:scale-105  "
+                                 onclick="changeMainImage('{{ product_image.image.url }}')">
                                 <img src="{{ product_image.image.url }}" alt="product_image_{{ product_image.id }}"
                                      class=" object-cover ">
                             </div>
@@ -43,7 +44,7 @@
                             </label>
                             <div>
                                 <button type="button" class="btn  " onclick="increaseQuantity()">+</button>
-                                <input id="product-quantity" class="input  px-4 w-20" value='1' name="quantity" >
+                                <input id="product-quantity" class="input  px-4 w-20" value='1' name="quantity">
                                 <button type="button" class="btn " onclick="decreaseQuantity()">-</button>
                             </div>
                         </div>
@@ -53,10 +54,10 @@
                             ₹<span id="price">{{ product.price }}</span>
                         </p>
                         <div>
-                            <button class="btn btn-primary m-2">
-                            Buy Now
-                        </button>
-                        <button class="btn btn-outline m-2">Add to Cart</button>
+                            <button class="btn btn-primary m-2" name="buy-now" type="submit">
+                                Buy Now
+                            </button>
+                            <button class="btn btn-outline m-2" name="add-cart" type="submit">Add to Cart</button>
                         </div>
                     </div>
                 </form>
@@ -70,34 +71,34 @@
         const mainImageElement = document.getElementById('main-image');
         const productQuantityElement = document.getElementById('product-quantity');
         const totalPriceSpan = document.getElementById('price');
-        var basePrice = {{ product.price }} ;
-        productQuantityElement.addEventListener('change',function (evt) {
+        var basePrice = {{ product.price }};
+        productQuantityElement.addEventListener('change', function (evt) {
             let value = Number(productQuantityElement.value);
-            if(value < 1){
+            if (value < 1) {
                 productQuantityElement.value = 1;
             }
         })
 
         function changeMainImage(src) {
-            mainImageElement.src = src ;
+            mainImageElement.src = src;
         }
 
-        function increaseQuantity(){
-            let value = Number(productQuantityElement.value) ;
+        function increaseQuantity() {
+            let value = Number(productQuantityElement.value);
             value = value + 1;
-            productQuantityElement.value  = value ;
+            productQuantityElement.value = value;
             totalPriceSpan.innerText = String(value * basePrice);
 
         }
-        function decreaseQuantity(){
-            let value = Number(productQuantityElement.value) ;
-            if (value > 1){
-                value = value -1 ;
-                 productQuantityElement.value  = value ;
-                 totalPriceSpan.innerText = String(value*basePrice);
+
+        function decreaseQuantity() {
+            let value = Number(productQuantityElement.value);
+            if (value > 1) {
+                value = value - 1;
+                productQuantityElement.value = value;
+                totalPriceSpan.innerText = String(value * basePrice);
             }
         }
-
 
 
     </script>

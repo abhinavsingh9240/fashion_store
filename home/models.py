@@ -81,6 +81,14 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def amount(self):
+        order_items = self.orderitem_set.all()
+        amount = 0
+        for item in order_items:
+            amount += item.price
+        return  amount
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
