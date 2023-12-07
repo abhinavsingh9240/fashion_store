@@ -28,18 +28,18 @@
                     <span>Updated Successfully</span>
                 </div>
             {% endif %}
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div class="rounded-box border-base-300 border-2 p-6">
                     <h2 class="text-lg font-semibold p-1">Email</h2>
-                    <div class="flex space-x-2 ">
-                        <div class="form-control w-full max-w-xs">
+                    <div class="flex flex-col md:flex-row ">
+                        <div class="form-control w-full max-w-xs mx-1">
                             <label class="label">
                                 <span class="label-text">Current Email</span>
                             </label>
                             <input type="text" placeholder="Not Available" class="input input-bordered w-full max-w-xs"
                                    disabled value="{{ user.email }}"/>
                         </div>
-                        <div class="form-control w-full max-w-xs">
+                        <div class="form-control w-full max-w-xs mx-1">
                             <label class="label">
                                 <span class="label-text">New Email</span>
                             </label>
