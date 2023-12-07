@@ -18,7 +18,7 @@
 <nav id="navbar" class="fixed top-0 w-screen z-40 flex justify-center text-white hover:bg-black ">
     <div class="container flex justify-between place-items-center text-xl font-semibold  py-2 px-4">
         <div class="flex place-items-center ">
-            <button class="btn btn-ghost fill-white lg:hidden">
+            <button class="btn btn-ghost fill-white lg:hidden z-50" onclick="toggle_navigation_menu()">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class="">
                     <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
                 </svg>
@@ -29,32 +29,35 @@
             </div>
         </div>
         <div class="flex place-items-center ">
-            <ul class="place-items-center hidden lg:flex">
-                <li><a href="{% url 'index' %}" class="btn btn-ghost">Home</a></li>
-                <li><a href="{% url 'list' %}" class="btn btn-ghost">Products</a></li>
-                <li class="dropdown dropdown-hover">
-                    <label tabindex="0" class="btn btn-ghost rounded-btn"><a href="{% url 'list' %}?section=Men">Men</a></label>
-                    <ul tabindex="0"
-                        class="menu dropdown-content z-[1] p-2 shadow text-primary bg-base-100 rounded-box w-32 ">
-                        {% for men_category in categories_men %}
-                            <li><a href="{% url 'list' %}?category={{ men_category.id }}">{{ men_category.name }}</a></li>
+            <div id="navigation-menu" class="hidden lg:block">
+                <ul class="fixed top-0 left-0 right-0 bottom-0 lg:static flex flex-col lg:flex-row place-items-center justify-center bg-black rounded-box">
+                    <li><a href="{% url 'index' %}" class="btn btn-ghost">Home</a></li>
+                    <li><a href="{% url 'list' %}" class="btn btn-ghost">Products</a></li>
+                    <li class="dropdown dropdown-hover">
+                        <label tabindex="0" class="btn btn-ghost rounded-btn">Men</label>
+                        <ul tabindex="0"
+                            class="menu dropdown-content z-[1] p-2 shadow text-primary bg-base-100 rounded-box w-32 ">
+                            {% for men_category in categories_men %}
+                                <li><a href="{% url 'list' %}?category={{ men_category.id }}">{{ men_category.name }}</a></li>
 
-                        {% endfor %}
-                    </ul>
-                </li>
-                <li class="dropdown dropdown-hover">
-                    <label tabindex="0" class="btn btn-ghost rounded-btn"><a href="{% url 'list' %}?section=Women">Women</a></label>
-                    <ul tabindex="0"
-                        class="menu dropdown-content z-[1] p-2 shadow text-primary bg-base-100 rounded-box w-44 ">
-                        {% for women_category in categories_women %}
-                            <li><a href="{% url 'list' %}?category={{ women_category.id }}">{{ women_category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="dropdown dropdown-hover">
+                        <label tabindex="0" class="btn btn-ghost rounded-btn">Women</label>
+                        <ul tabindex="0"
+                            class="menu dropdown-content z-[1] p-2 shadow text-primary bg-base-100 rounded-box w-44 ">
+                            {% for women_category in categories_women %}
+                                <li><a href="{% url 'list' %}?category={{ women_category.id }}">{{ women_category.name }}</a></li>
 
-                        {% endfor %}
-                    </ul>
-                </li>
-                <li><a href="#" class="btn btn-ghost">About Us</a></li>
-                <li><a href="#" class="btn btn-ghost">Contact Us</a></li>
-            </ul>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="#" class="btn btn-ghost">About Us</a></li>
+                    <li><a href="#" class="btn btn-ghost">Contact Us</a></li>
+                </ul>
+
+            </div>
             <button onclick="toggle_search()" class="btn btn-ghost">
 
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -138,11 +141,11 @@
 
 </div>
 {#search section #}
-<section id="search-panel" class=" hidden fixed inset-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-[440px] bg-base-100 shadow-xl card z-40">
+<section id="search-panel" class=" hidden fixed inset-1/2 -translate-x-1/2 -translate-y-1/2 w-screen sm:w-2/3 h-[440px] bg-base-100 shadow-xl card z-40">
     <div class="flex flex-col p-6">
         <input type="text" placeholder="Search Here" class="input input-bordered input-primary w-full " id="search-input" />
         <div class="py-3 font-semibold px-2">Results:</div>
-        <div id="search-results" class="grid grid-cols-6 overflow-y-auto h-72">
+        <div id="search-results" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 overflow-y-auto h-72">
 
         </div>
     </div>
@@ -218,6 +221,14 @@
     </footer>
 </div>
 <script>
+    function toggle_navigation_menu(){
+        const navigation_menu = document.getElementById('navigation-menu');
+        if(navigation_menu.style.display === "none"){
+            navigation_menu.style.display= "block";
+        }else{
+            navigation_menu.style.display= "none";
+        }
+    }
     function toggle_cart() {
         const cart = document.getElementById("cart");
         if (cart.style.display === "none") {
