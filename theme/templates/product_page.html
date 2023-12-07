@@ -6,11 +6,14 @@
     </script>
     <div class="min-h-screen pt-20">
         <section class="flex justify-center">
-            <div class="container  flex justify-center p-6 ">
-                <div class="w-1/2 flex  place-items-center m-2">
-                    <div class="flex flex-col justify-center h-96 ">
+            <div class="container flex flex-col lg:flex-row place-items-center justify-center px-2 ">
+                <div class="flex flex-col place-items-center m-2 lg:w-1/2 ">
+                    <div class="h-[400px] w-full flex justify-center lg:h-[500px]">
+                        <img id="main-image" src="{{ product.get_dp_url }}" alt="product_image" class="flex-shrink-0 h-full">
+                    </div>
+                    <div class="flex flex-row w-full overflow-x-auto mx-2 p-2 ">
                         {% for product_image in product.productimage_set.all %}
-                            <div class="w-20 h-20 overflow-hidden m-2 hover:scale-105  "
+                            <div class="flex-shrink-0 w-14 h-14 overflow-hidden m-2 hover:scale-105  "
                                  onclick="changeMainImage('{{ product_image.image.url }}')">
                                 <img src="{{ product_image.image.url }}" alt="product_image_{{ product_image.id }}"
                                      class=" object-cover ">
@@ -18,20 +21,20 @@
                         {% endfor %}
 
                     </div>
-                    <div class="flex justify-center w-full">
-                        <img id="main-image" src="{{ product.get_dp_url }}" alt="product_image" class="w-96">
-                    </div>
+
                 </div>
-                <form method="POST" action="" class="w-1/2 p-2 flex flex-col">
+                <form method="POST" action="" class="w-full p-2 flex flex-col">
                     {% csrf_token %}
-                    <h1 class="font-semibold text-3xl">{{ product.name }}</h1>
-                    <textarea class="textarea my-4 w-full grow" disabled>{{ product.description }}</textarea>
+                    <h1 class="font-semibold text-2xl">{{ product.name }}</h1>
+                    <p class="m-2 font-bold text-xl">
+                            ₹<span id="price">{{ product.price }}</span>
+                    </p>
                     <div class="flex">
                         <div class="mx-2">
                             <label class="label">
                                 <span class="label-text">Size</span>
                             </label>
-                            <select class="select select-primary" name="size">
+                            <select class="select select-primary select-sm text-xs " name="size">
                                 {% for size in product.size.all %}
                                     <option value="{{ size.id }}">{{ size.name }}</option>
                                 {% endfor %}
@@ -43,16 +46,14 @@
                                 <span class="label-text">Quantity</span>
                             </label>
                             <div>
-                                <button type="button" class="btn  " onclick="increaseQuantity()">+</button>
-                                <input id="product-quantity" class="input  px-4 w-20" value='1' name="quantity">
-                                <button type="button" class="btn " onclick="decreaseQuantity()">-</button>
+                                <button type="button" class="btn btn-sm " onclick="increaseQuantity()">+</button>
+                                <input id="product-quantity" class="input input-sm px-4 w-16" value='1' name="quantity">
+                                <button type="button" class="btn btn-sm " onclick="decreaseQuantity()">-</button>
                             </div>
                         </div>
                     </div>
-                    <div class="flex place-items-center justify-between">
-                        <p class="m-2 font-bold text-2xl">
-                            ₹<span id="price">{{ product.price }}</span>
-                        </p>
+                    <div class="flex place-items-center justify-between mt-4">
+
                         <div>
                             <button class="btn btn-primary m-2" name="buy-now" type="submit">
                                 Buy Now
@@ -60,6 +61,8 @@
                             <button class="btn btn-outline m-2" name="add-cart" type="submit">Add to Cart</button>
                         </div>
                     </div>
+                    <textarea class="textarea my-4 h-96 grow" disabled>{{ product.description }}</textarea>
+
                 </form>
 
 
