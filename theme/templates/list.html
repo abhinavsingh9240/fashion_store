@@ -122,15 +122,14 @@
 {#            <button class="btn btn-primary" type="submit">Apply Filters</button>#}
 {#            </div>#}
 {#        </form>#}
-        <div class="flex justify-center px-6   w-full">
-            <div class="container grid grid-cols-4 gap-2">
+        <div class="flex justify-center px-2 lg:px-6   w-full">
+            <div class="container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
 
                 {% for product  in products %}
-                    <div class="w-full  p-3 h-[540px]">
-                        <a href="{% url 'product' product.id %}" class="p-2 rounded-box hover:scale-105 transition-transform duration-300 hover:-translate-y-2 flex flex-col justify-between h-full"
-                           href="#">
+                    <div class="w-full  p-3 ">
+                        <a href="{% url 'product' product.id %}" class="p-2 rounded-box hover:scale-105 transition-transform duration-300 hover:-translate-y-2 flex flex-col justify-between h-full">
                             <div>
-                                <div class="h-40 md:h-[22rem] rounded overflow-hidden w-full bg-cover "
+                                <div class="h-40 lg:h-[22rem] rounded overflow-hidden w-full bg-cover "
                                      style='background-image: url("{{ product.get_dp_url }}")'>
                                     {#                                    <img alt="ecommerce" class="object-cover object-center w-full h-full"#}
                                     {#                                         src="{{ product.get_dp_url }}">#}
@@ -143,9 +142,9 @@
                                     <p class="text-lg">₹{{ product.price }}</p>
                                     {#                                    <button class="btn btn-primary">Buy Now</button>#}
                                 </div>
-                                <div class="flex space-x-2 mt-2">
+                                <div class="flex flex-wrap  mt-2">
                                     {% for size in product.size.all %}
-                                        <div class="border border-primary px-2 py-0.5">
+                                        <div class="border border-primary px-2 py-0.5 m-0.5">
                                             {{ size.name }}
 
                                         </div>
