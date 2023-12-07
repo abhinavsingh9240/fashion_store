@@ -3,6 +3,11 @@ from django.db import models
 
 
 # Create your models here.
+# class UserProfile(models.Model):
+#     user = models.OneToOneField(get_user_model(),on_delete=models.CASCADE)
+#     email_verification_token = models.CharField(max_length=255)
+#     is_verified = models.BooleanField(default=False)
+
 class Section(models.Model):
     name = models.CharField(max_length=50)
 

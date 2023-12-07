@@ -97,6 +97,11 @@
 
                     <button type="submit" class="btn btn-primary btn-wide">Register Account</button>
                 </div>
+                {%  if message %}
+                    <div class="text-center text-error">
+                        {{ message }}
+                    </div>
+                {% endif %}
             </form>
         </div>
 

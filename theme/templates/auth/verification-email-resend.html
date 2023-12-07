@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Products {% endblock %}
+{% block content %}
+    <script>
+        const navbar = document.getElementById("navbar");
+        navbar.classList.add("bg-black");
+    </script>
+    <div class="pt-20 pb-10 flex min-h-screen w-screen justify-center place-items-center">
+        <div class="p-6 bg-base-200 rounded-box">
+            <h1 class="font-semibold text-xl">Account is Not Verified By Email </h1>
+            <form method='POST'>
+                {% csrf_token %}
+
+                <fieldset>
+                    {{ form }}
+                </fieldset>
+
+                <div >
+                    <button class="btn btn-outline-info" type="submit">Request New Email</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,10 +1,11 @@
 import razorpay
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-
+from verify_email.email_handler import send_verification_email
 from fashion_store import settings
 from home.forms import RegistrationForm, LoginForm, CartForm, OrderItemForm
 from home.models import Category, Product, Section, Size, Cart, Order, OrderItem, OrderPayment
@@ -133,40 +134,61 @@ def signin_view(request):
             email_phone = form.cleaned_data["email_phone"]
             password = form.cleaned_data["password"]
 
-            user = authenticate(request, username=email_phone, password=password)
+            # user = authenticate(request, username=email_phone, password=password)
+            try:
+                user = User.objects.get(username=email_phone)
+                if user.check_password(password):
+                    login(request, user)
+                    if user.is_active:
+                        return redirect('index')
+                    else:
+                        return redirect('request-new-link-from-email')
 
-            if user:
-                login(request, user)
-                return redirect('index')
-            else:
-                message = "Invalid Credentials"
+            except Exception as e:
+                print(e)
+
+            message = "Invalid Credentials"
+
     context = {
         "message": message,
         "form": form,
     }
-    return render(request, 'sign_in.html', context)
+    return render(request, 'auth/sign_in.html', context)
 
 
 def signup_view(request):
+    message = ""
     form = RegistrationForm()
     if request.method == "POST":
         form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.username = user.email
-            user.save()
+        # Checking if user is already registerd or not
+        user = None
+        try:
+            user = User.objects.get(username=form.cleaned_data["email"])
+        except Exception as e:
+            print(e)
 
-            redirect("sign_in")
+        if form.is_valid() and user is None:
+            # user = form.save(commit=False)
+            inactive_user = send_verification_email(request, form)
+            inactive_user.username = inactive_user.email
+            inactive_user.save()
+            return redirect("sign_in")
+
+        elif user:
+            message = "User with email already exist"
+
     context = {
-        "form": form
+        "form": form,
+        "message": message,
     }
-    return render(request, template_name='sign_up.html', context=context)
+    return render(request, template_name='auth/sign_up.html', context=context)
 
 
 def signout_view(request):
     if request.method == "POST":
         logout(request)
-        return render(request, template_name="sign_out.html")
+        # return render(request, template_name="auth/sign_out.html")
     return redirect("index")
 
 
